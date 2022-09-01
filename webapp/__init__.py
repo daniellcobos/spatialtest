@@ -3,7 +3,7 @@ import geopandas as gpd
 import pyogrio
 from sqlalchemy import create_engine
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path = '/static')
 
 db_connection_url = "postgresql://postgres:postgres@localhost:5432/SpatialSampling"
 con = create_engine(db_connection_url)
@@ -53,5 +53,3 @@ def prox():
     print(df2)
     return render_template("prototype2.html", sample=sample)
 
-if __name__ == '__main__':
-    app.run()
