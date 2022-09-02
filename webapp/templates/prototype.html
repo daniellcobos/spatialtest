@@ -19,9 +19,11 @@
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid">
              <a class="navbar-brand" href="#">Synapsis</a>
+             <a class="navbar-brand" href="/prox">Muestreo por proximidad a puntos</a>
         </div>
     </nav>
      <div class="container mt-5">
+                  <h3>Residencias clasificadas por estrato</h3>
          <div class="row">
              <div class="col-sm">
             <form action="{{ url_for('muestreo') }}" method="POST" name="data" id="data">

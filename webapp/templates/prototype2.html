@@ -22,6 +22,7 @@
         </div>
     </nav>
      <div class="container mt-5">
+         <h3>Residencias cercanas a centros educativos</h3>
          <div class="row">
              <div class="col-sm">
             <form action="{{ url_for('prox') }}" method="POST" name="data" id="data">
@@ -36,7 +37,7 @@
                         <option value="Cali" disabled>Cali</option>
                         <option value="Pereira y Dosquebradas" disabled>Pereira y Dosquebradas</option>
                     </select><br>
-                  <label for="distancia"> Distancia de busqueda</label><br>
+                  <label for="distancia"> Distancia de busqueda (metros)</label><br>
                     <input type="number" name="distancia" id="distancia" value=1></input><br>
                   <label for="puntos"> Numero Puntos</label><br>
                 <input type="number" name="puntos" id="puntos" value=1></input><br>
