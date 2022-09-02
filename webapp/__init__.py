@@ -14,15 +14,17 @@ con = create_engine(db_connection_url)
 
 @app.route('/')
 def firstpage():
-    sql = "Select * from direstrato"
+    sql = "select * from direstrato order by random() limit 30000;"
     df = gpd.read_postgis(sql, con)
-    sample = ""
+    df2 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(10))
+    print(df2)
+    sample = df2.to_json()
     return render_template("prototype.html", sample=sample)
 
 
 @app.route('/muestreo', methods =['POST'])
 def muestreo():
-    sql = "Select * from direstrato"
+    sql = "select * from direstrato order by random() limit 30000;"
     puntos1 = int(request.form['puntos1'])
     puntos2 = int(request.form['puntos2'])
     proporcion = request.form['proporcion']
@@ -30,7 +32,7 @@ def muestreo():
     if proporcion == "prop1":
         df3 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(puntos1))
     elif proporcion == "prop2":
-        df3 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(frac=puntos2/1000))
+        df3 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(frac=puntos2/100))
     else:
         df3 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(5))
     sample = df3.to_json()
