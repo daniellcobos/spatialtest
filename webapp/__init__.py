@@ -7,22 +7,22 @@ app = Flask(__name__, static_url_path = '/static')
 
 db_connection_url = "postgresql://postgres:postgres@localhost:5432/SpatialSampling"
 con = create_engine(db_connection_url)
-sql = "Select * from direstrato"
+
 
 
 
 
 @app.route('/')
 def firstpage():
+    sql = "Select * from direstrato"
     df = gpd.read_postgis(sql, con)
-    df2 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(10))
-    print(df2)
-    sample = df2.to_json()
+    sample = ""
     return render_template("prototype.html", sample=sample)
 
 
 @app.route('/muestreo', methods =['POST'])
 def muestreo():
+    sql = "Select * from direstrato"
     puntos1 = int(request.form['puntos1'])
     puntos2 = int(request.form['puntos2'])
     proporcion = request.form['proporcion']
