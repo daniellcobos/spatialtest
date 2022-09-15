@@ -72,7 +72,7 @@
 <script>
    const sample = {{ sample | safe }}
    const tablebody = document.getElementById("tablebody")
-  console.log(sample)
+
 
    for (let e of sample.features){
        tr = document.createElement("tr")
@@ -177,7 +177,8 @@
             ],
             view: new ol.View({
                 projection: 'EPSG:4326',
-                center: [-74.08083,4.593333],
+                //center of the map
+                center: sample.features[0].geometry.coordinates,
                 zoom: 13
             }),
 
