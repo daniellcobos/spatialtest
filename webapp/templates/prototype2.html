@@ -29,13 +29,9 @@
                     <label for="ciudad"> Seleccione una ciudad</label><br>
                     <select name="ciudad" id="ciudad">
                         <option value="Bogota" selected>Bogota</option>
-                        <option value="Medellin">Medellin y Valle de Aburra</option>
-                        <option value="Barranquilla y Soledad" disabled>Barranquilla y Soledad</option>
-                        <option value="Bucaramanga - Floridablanca - Piedecuesta" disabled>Bucaramanga - Floridablanca -
-                            Piedecuesta</option>
-                        <option value="Cartagena" disabled>Cartagena</option>
-                        <option value="Cali" disabled>Cali</option>
-                        <option value="Pereira y Dosquebradas" disabled>Pereira y Dosquebradas</option>
+                        <option value="Medellin">Medellin </option>
+                        <option value="Barranquilla" >Barranquilla</option>
+                        <option value="Cali">Cali</option>
                     </select><br>
                   <label for="distancia"> Distancia de busqueda (metros)</label><br>
                     <input type="number" name="distancia" id="distancia" value=1></input><br>
@@ -148,11 +144,12 @@ console.log(vectorLayer.getStyleFunction())
 
         });
    for (let e of sample.features){
+       console.log(e)
        tr = document.createElement("tr")
        tdid = document.createElement("td")
        tdid.innerText = e.id
        tddir = document.createElement("td")
-       tddir.innerText =e.properties.pdonvial + " " + e.properties.pdotexto
+       tddir.innerText = e.properties.direccion
 
 
        tr.appendChild(tdid)

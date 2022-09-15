@@ -44,10 +44,12 @@ def muestreo():
 def prox():
     if request.method == 'POST':
         distancia = int(request.form['distancia'])
-        sql2 = "Select dir.* from colegios_2022_03 as col left join fe as dir on ST_Dwithin(col.geom,dir.geom,{})  order by random() limit 10000".format(distancia)
+        ciudad = request.form['ciudad']
+        sql2 = "Select dir.* from Colegios as col left join diresplano as dir on ST_Dwithin(col.geom,dir.geom,{}) where dir.ciudad='{}' order by random() limit 10000".format(distancia, ciudad)
     else:
-        sql2 = "Select dir.* from colegios_2022_03  as col left join fe as dir on ST_Dwithin(col.geom,dir.geom,75)  order by random() limit 10000"
+        sql2 = "Select dir.* from Colegios as col left join diresplano as dir on ST_Dwithin(col.geom,dir.geom,75)  where dir.ciudad='Bogota'  order by random() limit 10000"
     df = gpd.read_postgis(sql2, con)
+    print(sql2)
     if request.method == 'POST':
         puntos = int(request.form['puntos'])
     else:
