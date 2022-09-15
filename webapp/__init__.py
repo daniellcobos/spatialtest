@@ -1,4 +1,6 @@
-from flask import Flask,render_template,url_for, request
+import os
+
+from flask import Flask,render_template,url_for, request,send_from_directory
 import geopandas as gpd
 import pyogrio
 from sqlalchemy import create_engine
@@ -19,6 +21,8 @@ def firstpage():
     df2 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(10))
     print(df2)
     sample = df2.to_json()
+    archivo = os.path.join(app.root_path, 'static/downloads/', '', 'Muestreo.xlsx')
+    download = df2.to_excel(archivo, index=False, header=True)
     return render_template("prototype.html", sample=sample)
 
 
@@ -37,6 +41,8 @@ def muestreo():
     else:
         df3 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(5))
     sample = df3.to_json()
+    archivo = os.path.join(app.root_path, 'static/downloads/', '', 'Muestreo.xlsx')
+    download = df3.to_excel (archivo, index = False, header=True)
     print(sql)
     return render_template("prototype.html", sample=sample)
 
@@ -58,4 +64,9 @@ def prox():
     sample = df2.to_json()
     print(df2)
     return render_template("prototype2.html", sample=sample)
+
+@app.route('/download/muestreo')
+def download_file():
+    path = os.path.join(app.root_path, 'static/downloads/',)
+    return send_from_directory(path, 'Muestreo.xlsx')
 
