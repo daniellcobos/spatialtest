@@ -42,7 +42,7 @@ def muestreo():
         df3 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(5))
     sample = df3.to_json()
     archivo = os.path.join(app.root_path, 'static/downloads/', '', 'Muestreo.xlsx')
-    download = df3.to_excel (archivo, index = False, header=True)
+    df3.to_excel (archivo, index = False, header=True)
     print(sql)
     return render_template("prototype.html", sample=sample)
 
@@ -51,7 +51,12 @@ def prox():
     if request.method == 'POST':
         distancia = int(request.form['distancia'])
         ciudad = request.form['ciudad']
-        sql2 = "Select dir.* from Colegios as col left join diresplano as dir on ST_Dwithin(col.geom,dir.geom,{}) where dir.ciudad='{}' order by random() limit 10000".format(distancia, ciudad)
+        tipo = request.form['tipo']
+        if tipo == "Educacion":
+            sql2 = "Select dir.* from Colegios as col left join diresplano as dir on ST_Dwithin(col.geom,dir.geom,{}) where dir.ciudad='{}' order by random() limit 10000".format(distancia, ciudad)
+        elif tipo == "Transporte":
+            sql2 = "Select dir.* from transporte_publico_webmerc as tpm left join diresplano as dir on ST_Dwithin(tpm.geom,dir.geom,{}) where dir.ciudad='{}' order by random() limit 10000".format(
+                distancia, ciudad)
     else:
         sql2 = "Select dir.* from Colegios as col left join diresplano as dir on ST_Dwithin(col.geom,dir.geom,75)  where dir.ciudad='Bogota'  order by random() limit 10000"
     df = gpd.read_postgis(sql2, con)
@@ -62,11 +67,17 @@ def prox():
         puntos = 15
     df2 = df.sample(puntos)
     sample = df2.to_json()
-    print(df2)
+    archivo = os.path.join(app.root_path, 'static/downloads/', '', 'Muestreo2.xlsx')
+    df2.to_excel(archivo, index=False, header=True)
     return render_template("prototype2.html", sample=sample)
 
 @app.route('/download/muestreo')
 def download_file():
     path = os.path.join(app.root_path, 'static/downloads/',)
     return send_from_directory(path, 'Muestreo.xlsx')
+
+@app.route('/download/muestreoprox')
+def download_muestreo():
+    path = os.path.join(app.root_path, 'static/downloads/',)
+    return send_from_directory(path, 'Muestreo2.xlsx')
 
