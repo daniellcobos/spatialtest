@@ -16,6 +16,7 @@ con = create_engine(db_connection_url)
 
 @app.route('/')
 def firstpage():
+    con.connect()
     sql = "select * from direstrato where ciudad = 'Bogota' order by random() limit 30000;"
     df = gpd.read_postgis(sql, con)
     df2 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(10))
@@ -23,11 +24,13 @@ def firstpage():
     sample = df2.to_json()
     archivo = os.path.join(app.root_path, 'static/downloads/', '', 'Muestreo.xlsx')
     download = df2.to_excel(archivo, index=False, header=True)
+    con.connect().close()
     return render_template("prototype.html", sample=sample)
 
 
 @app.route('/muestreo', methods =['POST'])
 def muestreo():
+    con.connect()
     ciudad = request.form['ciudad']
     puntos1 = int(request.form['puntos1'])
     puntos2 = int(request.form['puntos2'])
@@ -44,11 +47,14 @@ def muestreo():
     archivo = os.path.join(app.root_path, 'static/downloads/', '', 'Muestreo.xlsx')
     df3.to_excel (archivo, index = False, header=True)
     print(sql)
+    con.connect().close()
     return render_template("prototype.html", sample=sample)
 
 @app.route('/prox', methods =['GET','POST'])
 def prox():
+    con.connect()
     if request.method == 'POST':
+
         distancia = int(request.form['distancia'])
         ciudad = request.form['ciudad']
         tipo = request.form['tipo']
@@ -72,6 +78,7 @@ def prox():
     sample = df2.to_json()
     archivo = os.path.join(app.root_path, 'static/downloads/', '', 'Muestreo2.xlsx')
     df2.to_excel(archivo, index=False, header=True)
+    con.connect().close()
     return render_template("prototype2.html", sample=sample)
 
 @app.route('/download/muestreo')
