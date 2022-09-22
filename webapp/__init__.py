@@ -57,6 +57,9 @@ def prox():
         elif tipo == "Transporte":
             sql2 = "Select dir.* from transporte_publico_webmerc as tpm left join diresplano as dir on ST_Dwithin(tpm.geom,dir.geom,{}) where dir.ciudad='{}' order by random() limit 10000".format(
                 distancia, ciudad)
+        elif tipo == "Comercio":
+            sql2 = "Select dir.* from ccom2 as cco left join diresplano as dir on ST_Dwithin(cco.geom,dir.geom,{}) where dir.ciudad='{}' order by random() limit 10000".format(
+                distancia, ciudad)
     else:
         sql2 = "Select dir.* from Colegios as col left join diresplano as dir on ST_Dwithin(col.geom,dir.geom,75)  where dir.ciudad='Bogota'  order by random() limit 10000"
     df = gpd.read_postgis(sql2, con)

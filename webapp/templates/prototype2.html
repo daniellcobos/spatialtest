@@ -16,6 +16,7 @@
                     <select name="tipo" id="tipo">
                         <option value="Transporte" selected>Transporte</option>
                         <option value="Educacion">Educacion </option>
+                        <option value="Comercio">Comercio </option>
                     </select><br>
                     <label for="ciudad"> Seleccione una ciudad</label><br>
                     <select name="ciudad" id="ciudad">
@@ -29,15 +30,17 @@
                   <label for="puntos"> Numero Puntos</label><br>
                 <input type="number" name="puntos" id="puntos" value=1></input><br>
                     <button> Enviar datos</button>
+                 <a class="btn btn-success" href="/download/muestreoprox"> Descargar Puntos</a>
                 </form>
              </div>
+
              <div class="col-sm">
                   <div id="map" class="map"></div>
              </div>
          </div>
          <div class="row">
-            <table class="table">
-                <thead>
+            <table class="table table-hover">
+                <thead class="thead-dark">
                 <tr>
                     <th>Id</th>
                     <th>Direccion</th>

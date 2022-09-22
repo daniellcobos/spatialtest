@@ -10,7 +10,8 @@
                   <h3>Residencias clasificadas por estrato</h3>
          <div class="row">
              <div class="col-sm">
-            <form action="{{ url_for('muestreo') }}" method="POST" name="data" id="data">
+                 <div class="row">
+                        <form action="{{ url_for('muestreo') }}" method="POST" name="data" id="data">
                     <label for="ciudad"> Seleccione una ciudad</label><br>
                     <select name="ciudad" id="ciudad">
                          <option value="Bogota" selected>Bogota</option>
@@ -31,14 +32,62 @@
                     <button> Enviar datos</button>
                     <a class="btn btn-success" href="/download/muestreo"> Descargar Puntos</a>
                 </form>
+                 </div>
+
+                   <div class="row leyendabox">
+                       <div>
+                            <svg class="circle" viewBox="0 0 24 24">
+                                     <circle cx="10" cy="10" r="4" fill="Tomato"/>
+                            </svg>
+                           <span class="leyenda"> Estrato 1</span>
+                       </div>
+                         <div >
+                            <svg class="circle" viewBox="0 0 24 24">
+                                     <circle cx="10" cy="10" r="4" fill="Olive"/>
+                            </svg>
+                           <span class="leyenda"> Estrato 2</span>
+                       </div>
+                        <div >
+                            <svg class="circle" viewBox="0 0 24 24">
+                                     <circle cx="10" cy="10" r="4" fill="RoyalBlue"/>
+                            </svg>
+                           <span class="leyenda"> Estrato 3</span>
+                       </div>
+                        <div >
+                            <svg class="circle" viewBox="0 0 24 24">
+                                     <circle cx="10" cy="10" r="4" fill="DarkSeaGreen"/>
+                            </svg>
+                           <span class="leyenda"> Estrato 4</span>
+                       </div>
+                        <div >
+                            <svg class="circle" viewBox="0 0 24 24">
+                                     <circle cx="10" cy="10" r="4" fill="Purple"/>
+                            </svg>
+                           <span class="leyenda"> Estrato 5</span>
+                       </div>
+                        <div >
+                            <svg class="circle" viewBox="0 0 24 24">
+                                     <circle cx="10" cy="10" r="4" fill="Gold"/>
+                            </svg>
+                           <span class="leyenda"> Estrato 6</span>
+                       </div>
+
+
+         </div>
              </div>
              <div class="col-sm">
                   <div id="map" class="map"></div>
              </div>
          </div>
-         <div class="row">
-            <table class="table">
-                <thead>
+
+
+
+
+
+         </div>
+        <div class="container mt-5 overflow-auto" id="coortable">
+            <table class="table table-hover">
+                <thead class="thead-dark">
                 <tr>
                     <th>Id</th>
                     <th>Direccion</th>
@@ -49,7 +98,6 @@
 
                 </tbody>
             </table>
-         </div>
 
          </div>
 </body>

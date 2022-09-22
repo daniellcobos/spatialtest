@@ -1,0 +1,32 @@
+/*! normalize.css v5.0.0 | MIT License | github.com/necolas/normalize.css */
+@import url('https://fonts.googleapis.com/css?family=Didact+Gothic');
+
+* {
+    font-family:'Century Gothic','Futura','Didact Gothic',san-serif;
+    font-size:small;
+}
+
+.map {
+            height: 400px;
+            width: 100%;
+        }
+
+#coortable{
+    height: 500px;
+    margin-bottom: 1rem;
+    border: solid gainsboro 1px;
+}
+.circle{
+    width: 24px;
+    height: 24px;
+      vertical-align: middle;
+  display: inline-block;
+}
+.leyenda{
+      vertical-align: middle;
+  display: inline-block;
+}
+.leyendabox{
+    margin: 1rem;
+    border: solid 1px silver;
+}
