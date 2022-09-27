@@ -6,9 +6,10 @@ import pyogrio
 from sqlalchemy import create_engine
 
 app = Flask(__name__, static_url_path = '/static')
+app.config.from_object('config.local')
+db_connection_string = app.config["DBCONN"]
 
-db_connection_url = "postgresql://postgres:postgres@localhost:5432/SpatialSampling"
-con = create_engine(db_connection_url)
+con = create_engine(db_connection_string)
 
 
 

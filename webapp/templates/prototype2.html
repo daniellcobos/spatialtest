@@ -36,6 +36,7 @@
 
              <div class="col-sm">
                   <div id="map" class="map"></div>
+                 <a id="glink" href="#">Mirar punto seleccionado en Google Maps</a>
              </div>
          </div>
          <div class="row">
@@ -58,7 +59,7 @@
 <script>
    const sample = {{ sample | safe }}
    const tablebody = document.getElementById("tablebody")
-
+    const glink = document.getElementById("glink")
 
 
 
@@ -151,7 +152,13 @@ console.log(vectorLayer.getStyleFunction())
 
        tablebody.appendChild(tr)
    }
-
+map.on('click', function(evt) {
+    var feature = map.forEachFeatureAtPixel(evt.pixel,
+      function(feature) {
+        let coords = feature.getGeometry().getCoordinates();
+          let linkstring = "https://www.google.com/maps/@" + coords[1] +","+ coords[0]+",40m/data=!3m1!1e3";
+          glink.href = linkstring
+      })})
 </script>
 
 {% endblock %}
