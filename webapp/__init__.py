@@ -18,9 +18,9 @@ con = create_engine(db_connection_string)
 @app.route('/')
 def firstpage():
     con.connect()
-    sql = "select * from direstrato where ciudad = 'Bogota' order by random() limit 30000;"
+    sql = "select * from direstrato where ciudad = 'Bogota' order by random() limit 1000;"
     df = gpd.read_postgis(sql, con)
-    df2 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(10))
+    df2 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(1))
     print(df2)
     sample = df2.to_json()
     archivo = os.path.join(app.root_path, 'static/downloads/', '', 'Muestreo.xlsx')

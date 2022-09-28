@@ -12,24 +12,30 @@
              <div class="col-sm">
                  <div class="row">
                         <form action="{{ url_for('muestreo') }}" method="POST" name="data" id="data">
-                    <label for="ciudad"> Seleccione una ciudad</label><br>
-                    <select name="ciudad" id="ciudad">
-                         <option value="Bogota" selected>Bogota</option>
-                        <option value="Medellin">Medellin </option>
-                        <option value="Barranquilla" >Barranquilla</option>
-                        <option value="Cali">Cali</option>
-                    </select><br>
-                  <label for="proporcion"> Seleccione tipo de Proporcion</label><br>
-                    <select name="proporcion" id="proporcion">
+
+                             <div class="form-group">
+                                   <label for="ciudad"> Seleccione una ciudad</label>
+                                   <select class="form-control" name="ciudad" id="ciudad">
+                                         <option value="Bogota" selected>Bogota</option>
+                                        <option value="Medellin">Medellin </option>
+                                        <option value="Barranquilla" >Barranquilla</option>
+                                        <option value="Cali">Cali</option>
+                                    </select>
+                             </div>
+                  <div>
+                       <label for="proporcion"> Seleccione tipo de Proporcion</label><br>
+                    <select class="form-control"  name="proporcion" id="proporcion">
                         <option value="prop1" selected>No Proporcional</option>
                         <option value="prop2" >Proporcional</option>
 
-                    </select><br>
+                    </select>
+                  </div>
+
                     <label for="punto1"> Ingrese los puntos por estrato (No-Proporcional)</label><br>
-                    <input type="number" name="puntos1" id="puntos1" value=1></input><br>
+                    <input class="form-control"  type="number" name="puntos1" id="puntos1" value=1></input><br>
                     <label for="punto2"> Ingrese la proporcion por grupo (Proporcional)</label><br>
-                    <input type="number" name="puntos2" id="puntos2" value=1></input><br>
-                    <button> Enviar datos</button>
+                    <input class="form-control"  type="number" name="puntos2" id="puntos2" value=1></input><br>
+                    <button class="btn btn-primary">Generar Puntos</button>
                     <a class="btn btn-success" href="/download/muestreo"> Descargar Puntos</a>
                 </form>
                  </div>
@@ -77,7 +83,13 @@
              </div>
              <div class="col-sm">
                   <div id="map" class="map"></div>
-                    <a id="glink" href="#">Mirar punto seleccionado en Google Maps</a>
+                  <div class="card">
+                        <h5 class="card-title" id="pdir">Direccion</h5>
+                        <h6 class="card-subtitle mb-2 text-muted" id="pestr">Estrato</h6>
+
+                        <a id="glink" href="#" target="_blank">Mirar punto seleccionado en Google Maps</a>
+                  </div>
+
              </div>
          </div>
 
@@ -105,7 +117,10 @@
 <script>
    const sample = {{ sample | safe }}
    const tablebody = document.getElementById("tablebody")
-const glink = document.getElementById("glink")
+    const glink = document.getElementById("glink")
+    const pdir = document.getElementById("pdir")
+   const pestr = document.getElementById("pestr")
+
 
    for (let e of sample.features){
        tr = document.createElement("tr")
@@ -222,6 +237,8 @@ map.on('click', function(evt) {
         let coords = feature.getGeometry().getCoordinates();
           let linkstring = "https://www.google.com/maps/@" + coords[1] +","+ coords[0]+",60m/data=!3m1!1e3";
           glink.href = linkstring
+          pdir.innerText = "Direccion: " + feature.getProperties().direccion
+          pestr.innerText = "Estrato: " + feature.getProperties().estrato
       })})
 
 </script>
