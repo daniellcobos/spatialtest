@@ -5,3 +5,7 @@
 *.dbf
 *.xlsx
 config.py
+Muestreo.xlsx
+*.pyc
+venv/
+*.whl
