@@ -11,32 +11,36 @@
          <h3>Residencias cercanas a centros educativos</h3>
          <div class="row">
              <div class="col-sm">
-            <form action="{{ url_for('prox') }}" method="POST" name="data" id="data">
+            <form class="mb-1" action="{{ url_for('prox') }}" method="POST" name="data" id="data">
                 <label for="tipo"> Seleccione una ciudad</label><br>
-                    <select name="tipo" id="tipo">
+                    <select class="form-control"  name="tipo" id="tipo">
                         <option value="Transporte" selected>Transporte</option>
                         <option value="Educacion">Educacion </option>
                         <option value="Comercio">Comercio </option>
                     </select><br>
                     <label for="ciudad"> Seleccione una ciudad</label><br>
-                    <select name="ciudad" id="ciudad">
+                    <select  class="form-control"  name="ciudad" id="ciudad">
                         <option value="Bogota" selected>Bogota</option>
                         <option value="Medellin">Medellin </option>
                         <option value="Barranquilla" >Barranquilla</option>
                         <option value="Cali">Cali</option>
                     </select><br>
                   <label for="distancia"> Distancia de busqueda (metros)</label><br>
-                    <input type="number" name="distancia" id="distancia" value=1></input><br>
+                    <input class="form-control"  type="number" name="distancia" id="distancia" value=1></input><br>
                   <label for="puntos"> Numero Puntos</label><br>
-                <input type="number" name="puntos" id="puntos" value=1></input><br>
-                    <button> Enviar datos</button>
+                <input  class="form-control"  type="number" name="puntos" id="puntos" value=1></input><br>
+                    <button class="btn btn-primary"> Generar Puntos</button>
                  <a class="btn btn-success" href="/download/muestreoprox"> Descargar Puntos</a>
                 </form>
              </div>
 
              <div class="col-sm">
                   <div id="map" class="map"></div>
-                 <a id="glink" href="#">Mirar punto seleccionado en Google Maps</a>
+                  <div class="card">
+                        <h5 class="card-title" id="pdir">Direccion</h5>
+                        <a id="glink" href="#" target="_blank">Mirar punto seleccionado en Google Maps</a>
+                  </div>
+
              </div>
          </div>
          <div class="row">
@@ -155,9 +159,12 @@ console.log(vectorLayer.getStyleFunction())
 map.on('click', function(evt) {
     var feature = map.forEachFeatureAtPixel(evt.pixel,
       function(feature) {
-        let coords = feature.getGeometry().getCoordinates();
+        const feature2 = feature.clone()
+          feature2.getGeometry().transform('EPSG:3857', 'EPSG:4326')
+          let coords = feature2.getGeometry().getCoordinates();
           let linkstring = "https://www.google.com/maps/@" + coords[1] +","+ coords[0]+",40m/data=!3m1!1e3";
           glink.href = linkstring
+          pdir.innerText = "Direccion: " + feature.getProperties().direccion
       })})
 </script>
 
