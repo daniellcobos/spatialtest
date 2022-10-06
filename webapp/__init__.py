@@ -4,6 +4,7 @@ from flask import Flask,render_template,url_for, request,send_from_directory
 import geopandas as gpd
 import pyogrio
 from sqlalchemy import create_engine
+import numpy as np
 
 app = Flask(__name__, static_url_path = '/static')
 app.config.from_object('config.local')
@@ -81,6 +82,27 @@ def prox():
     df2.to_excel(archivo, index=False, header=True)
     con.connect().close()
     return render_template("prototype2.html", sample=sample)
+
+@app.route('/systematic' ,methods =['GET','POST'])
+def systematic():
+    if request.method == 'GET' :
+        sql = "select * from direstratosys where ciudad = 'Bogota' order by random() limit 30000;"
+        intervalo = 5
+    else:
+        print(request.form)
+        ciudad = request.form['ciudad']
+        intervalo = int(request.form['intervalo'])
+        sql = "select * from direstratosys where ciudad = '" + ciudad + "' order by random() limit 30000;"
+    con.connect()
+    df = gpd.read_postgis(sql, con)
+    df2 = df.groupby('gridid', group_keys=False).apply(lambda x: x.sample(1))
+    df2 = df2.iloc[::intervalo, :]
+    print(df2)
+    sample = df2.to_json()
+    archivo = os.path.join(app.root_path, 'static/downloads/', '', 'Muestreo3.xlsx')
+    download = df2.to_excel(archivo, index=False, header=True)
+    con.connect().close()
+    return render_template("muestreosistematico.html", sample=sample)
 
 @app.route('/download/muestreo')
 def download_file():

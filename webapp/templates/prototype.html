@@ -116,6 +116,7 @@
 </body>
 <script>
    const sample = {{ sample | safe }}
+   console.log(sample)
    const tablebody = document.getElementById("tablebody")
     const glink = document.getElementById("glink")
     const pdir = document.getElementById("pdir")
@@ -161,7 +162,7 @@
 
         const styleFunction = function (feature) {
                const f= feature.getProperties()
-
+            console.log(f)
             const estrato = f.estrato
             let color = 'black'
              if (estrato === 1) {
@@ -231,6 +232,8 @@
             }),
 
         });
+
+        console.log(map)
 map.on('click', function(evt) {
     var feature = map.forEachFeatureAtPixel(evt.pixel,
       function(feature) {
