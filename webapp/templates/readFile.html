@@ -7,24 +7,9 @@
 {% endblock %}
 {% block content %}
      <div class="container mt-5">
-                  <h3>Clasificacion Sistematica</h3>
+                  <h3>Visor de Muestras</h3>
          <div class="row">
-                 <div class="col-sm-4">
-            <form class="mb-1" action="{{ url_for('systematic') }}" method="POST" name="data" id="data">
-                    <label for="ciudad"> Seleccione una ciudad</label><br>
-                    <select  class="form-control"  name="ciudad" id="ciudad">
-                        <option value="Bogota" selected>Bogota</option>
-                        <option value="Medellin">Medellin </option>
-                        <option value="Barranquilla" >Barranquilla</option>
-                        <option value="Cali">Cali</option>
-                    </select><br>
-                  <label for="Intervalo"> Intervalo</label><br>
-                    <input class="form-control"  type="number" name="intervalo" id="intervalo" value=1></input><br>
-                    <button class="btn btn-primary"> Generar Puntos</button>
-                 <a class="btn btn-success" href="/download/muestreosys"> Descargar Puntos</a>
-                </form>
-             </div>
-             <div class="col-sm-8">
+             <div class="col-sm">
                   <div id="map" class="map"></div>
                   <div class="card">
                         <h5 class="card-title" id="pdir">Direccion</h5>
@@ -59,6 +44,7 @@
 </body>
 <script>
    const sample = {{ sample | safe }}
+   console.log(sample)
    const tablebody = document.getElementById("tablebody")
     const glink = document.getElementById("glink")
     const pdir = document.getElementById("pdir")
@@ -102,18 +88,20 @@
         }
 
         const styleFunction = function (feature) {
-
+               const f= feature.getProperties()
+            console.log(f)
+           colortext = "tomato"
            return new ol.style.Style({
     image: new ol.style.Circle({
 
       fill: new ol.style.Fill({
-        color: 'Royalblue'
+        color: colortext
       }),
       stroke: new ol.style.Stroke({
-        color: 'whitesmoke',
+        color: "gold",
         width: 3
       }),
-      radius: 5
+      radius: 6
     })
   });
 
@@ -151,7 +139,7 @@
 
         });
 
-         console.log(map)
+        console.log(map)
 map.on('click', function(evt) {
     var feature = map.forEachFeatureAtPixel(evt.pixel,
       function(feature) {
@@ -159,7 +147,7 @@ map.on('click', function(evt) {
           let linkstring = "https://www.google.com/maps/@" + coords[1] +","+ coords[0]+",60m/data=!3m1!1e3";
           glink.href = linkstring
           pdir.innerText = "Direccion: " + feature.getProperties().direccion
-          pestr.innerText = "Cuadrante: " + feature.getProperties().gridid
+          pestr.innerText = "Estrato: " + feature.getProperties().estrato
       })})
 
 </script>

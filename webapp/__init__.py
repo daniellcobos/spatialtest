@@ -1,10 +1,11 @@
 import os
 
-from flask import Flask,render_template,url_for, request,send_from_directory
+from flask import Flask,render_template,url_for, request,send_from_directory, redirect
 import geopandas as gpd
-import pyogrio
+import pandas as pd
+from werkzeug.utils import secure_filename
 from sqlalchemy import create_engine
-import numpy as np
+from shapely import wkt
 
 app = Flask(__name__, static_url_path = '/static')
 app.config.from_object('config.local')
@@ -42,7 +43,7 @@ def muestreo():
     if proporcion == "prop1":
         df3 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(puntos1))
     elif proporcion == "prop2":
-        df3 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(frac=puntos2/100))
+        df3 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(frac=puntos2/1000))
     else:
         df3 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(5))
     sample = df3.to_json()
@@ -66,7 +67,7 @@ def prox():
             sql2 = "Select dir.* from transporte_publico_webmerc as tpm left join diresplano as dir on ST_Dwithin(tpm.geom,dir.geom,{}) where dir.ciudad='{}' order by random() limit 10000".format(
                 distancia, ciudad)
         elif tipo == "Comercio":
-            sql2 = vir.format(
+            sql2 = "Select dir.* from ccom2 as tpm left join diresplano as dir on ST_Dwithin(tpm.geom,dir.geom,{}) where dir.ciudad='{}' order by random() limit 10000".format(
                 distancia, ciudad)
     else:
         sql2 = "Select dir.* from Colegios as col left join diresplano as dir on ST_Dwithin(col.geom,dir.geom,75)  where dir.ciudad='Bogota'  order by random() limit 10000"
@@ -79,6 +80,8 @@ def prox():
     df2 = df.sample(puntos)
     sample = df2.to_json()
     archivo = os.path.join(app.root_path, 'static/downloads/', '', 'Muestreo2.xlsx')
+    df2=df2.set_crs('epsg:3857')
+    df2 = df2.to_crs({'init': 'epsg:4326'})
     df2.to_excel(archivo, index=False, header=True)
     con.connect().close()
     return render_template("prototype2.html", sample=sample)
@@ -114,3 +117,34 @@ def download_muestreo():
     path = os.path.join(app.root_path, 'static/downloads/',)
     return send_from_directory(path, 'Muestreo2.xlsx')
 
+@app.route('/download/muestreosys')
+def download_muestreosys():
+    path = os.path.join(app.root_path, 'static/downloads/',)
+    return send_from_directory(path, 'Muestreo3.xlsx')
+
+@app.route('/uploader')
+def uploader():
+    return render_template("uploader.html")
+
+@app.route('/readPoints', methods=['POST'])
+def readpoints():
+    if request.method == 'POST':
+        try:
+            # check if the post request has the file part
+            if 'file' not in request.files:
+                return redirect(request.url)
+            file = request.files['file']
+            df = pd.read_excel(file)
+            df['geom'] = gpd.GeoSeries.from_wkt(df['geom'])
+            df = gpd.GeoDataFrame(df, geometry='geom')
+            df = df.to_json()
+
+            # If the user does not select a file, the browser submits an
+            # empty file without a filename.
+            if file:
+                return render_template("readFile.html", sample=df)
+        except Exception as e:
+            print(e)
+            return "Archivo no Seleccionado"
+    else:
+        return redirect(url_for('uploader'))

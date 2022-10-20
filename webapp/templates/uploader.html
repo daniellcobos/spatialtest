@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block title %}Acuerdos Detalle {% endblock %}
+{% block head %}
+
+{{ super() }}
+
+{% endblock %}
+{% block content %}
+<div class="container mt-1">
+<form action="readPoints" method=post enctype=multipart/form-data>
+      <input  class="form-control"   type="file" name="file"  accept=".xls,.xlsx" >
+      <input  class ="btn btn-primary mt-1" type=submit value=Upload>
+    </form>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
