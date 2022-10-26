@@ -31,8 +31,8 @@
                     </select>
                           <label for="tipoes"> Seleccione tipo de estrato de muestreo</label><br>
                     <select class="form-control"  name="tipoes" id="tipoes">
-                        <option value="prop1" selected> Estrato Socioeconomico</option>
-                        <option value="prop2" >Localidad</option>
+                        <option value="es" selected> Estrato Socioeconomico</option>
+                        <option value="loc" >Localidad</option>
 
                     </select>
                   </div>
@@ -190,6 +190,9 @@
             }
             if (estrato === 6) {
                 colortext = "Gold"
+            }
+            else {
+                colortext = "Indigo"
             }
            return new ol.style.Style({
     image: new ol.style.Circle({

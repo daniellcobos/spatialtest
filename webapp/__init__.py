@@ -31,6 +31,31 @@ def firstpage():
     return render_template("prototype.html", sample=sample)
 
 
+def muestreoloc(proporcion, puntos1, puntos2):
+    sql = "SELECT locnombre, dir.geom, dir.direccion FROM loca as loc join direstrato as dir on ST_WITHIN(dir.geom, loc.geom) and dir.ciudad = 'Bogota' limit 25000"
+    df = gpd.read_postgis(sql, con)
+    if proporcion == "prop1":
+        df = df.groupby('locnombre', group_keys=False).apply(lambda x: x.sample(puntos1))
+    elif proporcion == "prop2":
+        df = df.groupby('locnombre', group_keys=False).apply(lambda x: x.sample(frac=puntos2 / 1000))
+    else:
+        df = df.groupby('locnombre', group_keys=False).apply(lambda x: x.sample(5))
+    df = df.rename(columns={"locnombre": "estrato"})
+    return df
+
+
+def muestreoes(ciudad, proporcion, puntos1, puntos2):
+    sql = "select * from direstrato where ciudad = '" + ciudad + "' order by random() limit 30000;"
+    df = gpd.read_postgis(sql, con)
+    if proporcion == "prop1":
+        df = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(puntos1))
+    elif proporcion == "prop2":
+        df = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(frac=puntos2 / 1000))
+    else:
+        df = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(5))
+    return df
+
+
 @app.route('/muestreo', methods =['POST'])
 def muestreo():
     con.connect()
@@ -38,20 +63,18 @@ def muestreo():
     puntos1 = int(request.form['puntos1'])
     puntos2 = int(request.form['puntos2'])
     proporcion = request.form['proporcion']
-    sql = "select * from direstrato where ciudad = '" + ciudad + "' order by random() limit 30000;"
-    df = gpd.read_postgis(sql, con)
-    if proporcion == "prop1":
-        df3 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(puntos1))
-    elif proporcion == "prop2":
-        df3 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(frac=puntos2/1000))
+    tipoes = request.form['tipoes']
+    if tipoes == 'es':
+        df = muestreoes(ciudad, proporcion, puntos1, puntos2)
     else:
-        df3 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(5))
-    sample = df3.to_json()
+        df = muestreoloc(proporcion, puntos1, puntos2)
+    sample = df.to_json()
+    print(df)
     archivo = os.path.join(app.root_path, 'static/downloads/', '', 'Muestreo.xlsx')
-    df3.to_excel (archivo, index = False, header=True)
-    print(sql)
+    df.to_excel(archivo, index = False, header=True)
     con.connect().close()
     return render_template("prototype.html", sample=sample)
+
 
 @app.route('/prox', methods =['GET','POST'])
 def prox():
@@ -86,6 +109,7 @@ def prox():
     con.connect().close()
     return render_template("prototype2.html", sample=sample)
 
+
 @app.route('/systematic' ,methods =['GET','POST'])
 def systematic():
     if request.method == 'GET' :
@@ -107,24 +131,29 @@ def systematic():
     con.connect().close()
     return render_template("muestreosistematico.html", sample=sample)
 
+
 @app.route('/download/muestreo')
 def download_file():
     path = os.path.join(app.root_path, 'static/downloads/',)
     return send_from_directory(path, 'Muestreo.xlsx')
+
 
 @app.route('/download/muestreoprox')
 def download_muestreo():
     path = os.path.join(app.root_path, 'static/downloads/',)
     return send_from_directory(path, 'Muestreo2.xlsx')
 
+
 @app.route('/download/muestreosys')
 def download_muestreosys():
     path = os.path.join(app.root_path, 'static/downloads/',)
     return send_from_directory(path, 'Muestreo3.xlsx')
 
+
 @app.route('/uploader')
 def uploader():
     return render_template("uploader.html")
+
 
 @app.route('/readPoints', methods=['POST'])
 def readpoints():
