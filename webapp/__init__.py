@@ -57,7 +57,7 @@ def muestreoes(ciudad, proporcion, puntos1, puntos2):
 
 
 def muestreocsus(ciudad, proporcion, puntos1, puntos2):
-    sql = "select * from dircsus_2 where ciudad = '" + ciudad + "' order by random() limit 100000;"
+    sql = "select * from dircsus_2 where ciudad = '" + ciudad + "' order by random() limit 50000;"
     df = gpd.read_postgis(sql, con)
     if proporcion == "prop1":
         df = df.groupby('cat', group_keys=False).apply(lambda x: x.sample(puntos1))
