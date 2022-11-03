@@ -174,32 +174,22 @@ const pcat = document.getElementById("pcat")
         const styleFunction = function (feature) {
                const f= feature.getProperties()
             console.log(f)
-            const estrato = f.estrato
+             const cat = f.cat
             let color = 'black'
-             if (estrato === 1) {
-                colortext = 'Tomato'
+            if (cat < 20) {
+                colortext = 'black'
             }
-            else if (estrato === 2) {
-                colortext = 'Olive'
+            else if (cat < 30) {
+                colortext = 'LightSkyBlue'
 
             }
-            else if (estrato === 3) {
-                colortext = 'RoyalBlue'
-            }
-            else if (estrato === 4) {
-                colortext = 'DarkSeaGreen'
-            }
-            else if (estrato === 5) {
-                colortext = "purple"
-
-            }
-            else if (estrato === 6) {
-                colortext = "Gold"
+            else if (cat < 40) {
+                colortext = "Yellow"
             }
             else {
                 colortext = "Indigo"
             }
-             const cat = f.cat
+
 
              if (cat === 11) {
                 colortext2 = 'black'
