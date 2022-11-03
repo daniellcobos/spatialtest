@@ -7,7 +7,7 @@
 {% endblock %}
 {% block content %}
      <div class="container mt-5">
-                  <h3>Residencias clasificadas por estrato</h3>
+                  <h3>Residencias clasificadas por Estrato de Uso</h3>
          <div class="row">
              <div class="col-sm">
                  <div class="row">
@@ -92,7 +92,7 @@
                   <div class="card">
                         <h5 class="card-title" id="pdir">Direccion</h5>
                         <h6 class="card-subtitle mb-2 text-muted" id="pestr">Estrato</h6>
-
+                         <h6 class="card-subtitle mb-2 text-muted" id="pcat">Categoria</h6>
                         <a id="glink" href="#" target="_blank">Mirar punto seleccionado en Google Maps</a>
                   </div>
 
@@ -110,7 +110,9 @@
                 <tr>
                     <th>Id</th>
                     <th>Direccion</th>
+                    <th>Categoria</th>
                     <th>Estrato</th>
+
                 </tr>
                 </thead>
                 <tbody id="tablebody">
@@ -127,7 +129,7 @@
     const glink = document.getElementById("glink")
     const pdir = document.getElementById("pdir")
    const pestr = document.getElementById("pestr")
-
+const pcat = document.getElementById("pcat")
 
    for (let e of sample.features){
        tr = document.createElement("tr")
@@ -135,10 +137,13 @@
        tdid.innerText = e.id
        tddir = document.createElement("td")
        tddir.innerText =e.properties.direccion
+       tdcat = document.createElement("td")
+       tdcat.innerText = e.properties.cat
        tdes = document.createElement("td")
        tdes.innerText = e.properties.estrato
        tr.appendChild(tdid)
        tr.appendChild(tddir)
+       tr.appendChild(tdcat)
        tr.appendChild(tdes)
        tablebody.appendChild(tr)
    }
@@ -194,6 +199,26 @@
             else {
                 colortext = "Indigo"
             }
+             const cat = f.cat
+
+             if (cat === 11) {
+                colortext2 = 'black'
+            }
+            else if (cat === 12) {
+                colortext2 = 'Cyan'
+
+            }
+            else if (cat === 13) {
+                colortext2 = 'whitesmoke'
+            }
+            else if (cat === 21) {
+                colortext2 = 'Indigo'
+            }
+            else if (cat === 31) {
+                colortext2 = "Yellow"
+
+            }
+
            return new ol.style.Style({
     image: new ol.style.Circle({
 
@@ -201,7 +226,7 @@
         color: colortext
       }),
       stroke: new ol.style.Stroke({
-        color: colortext,
+        color: colortext2,
         width: 3
       }),
       radius: 5
@@ -251,6 +276,7 @@ map.on('click', function(evt) {
           glink.href = linkstring
           pdir.innerText = "Direccion: " + feature.getProperties().direccion
           pestr.innerText = "Estrato: " + feature.getProperties().estrato
+           pcat.innerText = "Categoria: " + feature.getProperties().cat
       })})
 
 </script>

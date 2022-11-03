@@ -56,6 +56,18 @@ def muestreoes(ciudad, proporcion, puntos1, puntos2):
     return df
 
 
+def muestreocsus(ciudad, proporcion, puntos1, puntos2):
+    sql = "select * from dircsus_2 where ciudad = '" + ciudad + "' order by random() limit 100000;"
+    df = gpd.read_postgis(sql, con)
+    if proporcion == "prop1":
+        df = df.groupby('cat', group_keys=False).apply(lambda x: x.sample(puntos1))
+    elif proporcion == "prop2":
+        df = df.groupby('cat', group_keys=False).apply(lambda x: x.sample(frac=puntos2 / 1000))
+    else:
+        df = df.groupby('cat', group_keys=False).apply(lambda x: x.sample(5))
+    return df
+
+
 @app.route('/muestreo', methods =['POST'])
 def muestreo():
     con.connect()
@@ -66,6 +78,8 @@ def muestreo():
     tipoes = request.form['tipoes']
     if tipoes == 'es':
         df = muestreoes(ciudad, proporcion, puntos1, puntos2)
+    elif tipoes == "csus":
+        df = muestreocsus(ciudad, proporcion, puntos1, puntos2)
     else:
         df = muestreoloc(proporcion, puntos1, puntos2)
     sample = df.to_json()
@@ -73,7 +87,11 @@ def muestreo():
     archivo = os.path.join(app.root_path, 'static/downloads/', '', 'Muestreo.xlsx')
     df.to_excel(archivo, index = False, header=True)
     con.connect().close()
-    return render_template("prototype.html", sample=sample)
+    if tipoes == 'csus':
+        rtemplate = "csus.html"
+    else:
+        rtemplate = "prototype.html"
+    return render_template(rtemplate, sample=sample)
 
 
 @app.route('/prox', methods =['GET','POST'])
