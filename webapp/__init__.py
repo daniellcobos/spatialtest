@@ -7,11 +7,12 @@ from werkzeug.utils import secure_filename
 from sqlalchemy import create_engine
 from shapely import wkt
 
+
 app = Flask(__name__, static_url_path = '/static')
 app.config.from_object('config.local')
 db_connection_string = app.config["DBCONN"]
 
-con = create_engine(db_connection_string)
+
 
 
 
@@ -19,7 +20,7 @@ con = create_engine(db_connection_string)
 
 @app.route('/')
 def firstpage():
-    con.connect()
+    con = create_engine(db_connection_string)
     sql = "select * from direstrato where ciudad = 'Bogota' order by random() limit 1000;"
     df = gpd.read_postgis(sql, con)
     df2 = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(1))
@@ -31,8 +32,9 @@ def firstpage():
     return render_template("prototype.html", sample=sample)
 
 
-def muestreoloc(proporcion, puntos1, puntos2):
-    sql = "SELECT locnombre, dir.geom, dir.direccion FROM loca as loc join direstrato as dir on ST_WITHIN(dir.geom, loc.geom) and dir.ciudad = 'Bogota' limit 25000"
+def muestreoloc(ciudad,proporcion, puntos1, puntos2):
+    con = create_engine(db_connection_string)
+    sql = "SELECT locnombre, dir.geom, dir.direccion FROM loca as loc join direstrato as dir on ST_WITHIN(dir.geom, loc.geom) and dir.ciudad =  '" + ciudad + "' order by random() limit 35000"
     df = gpd.read_postgis(sql, con)
     if proporcion == "prop1":
         df = df.groupby('locnombre', group_keys=False).apply(lambda x: x.sample(puntos1))
@@ -41,10 +43,12 @@ def muestreoloc(proporcion, puntos1, puntos2):
     else:
         df = df.groupby('locnombre', group_keys=False).apply(lambda x: x.sample(5))
     df = df.rename(columns={"locnombre": "estrato"})
+    con.connect().close()
     return df
 
 
 def muestreoes(ciudad, proporcion, puntos1, puntos2):
+    con = create_engine(db_connection_string)
     sql = "select * from direstrato where ciudad = '" + ciudad + "' order by random() limit 30000;"
     df = gpd.read_postgis(sql, con)
     if proporcion == "prop1":
@@ -53,10 +57,12 @@ def muestreoes(ciudad, proporcion, puntos1, puntos2):
         df = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(frac=puntos2 / 1000))
     else:
         df = df.groupby('estrato', group_keys=False).apply(lambda x: x.sample(5))
+    con.connect().close()
     return df
 
 
 def muestreocsus(ciudad, proporcion, puntos1, puntos2):
+    con = create_engine(db_connection_string)
     sql = "select * from dircsus_2 where ciudad = '" + ciudad + "' order by random() limit 50000;"
     df = gpd.read_postgis(sql, con)
     if proporcion == "prop1":
@@ -65,11 +71,13 @@ def muestreocsus(ciudad, proporcion, puntos1, puntos2):
         df = df.groupby('cat', group_keys=False).apply(lambda x: x.sample(frac=puntos2 / 1000))
     else:
         df = df.groupby('cat', group_keys=False).apply(lambda x: x.sample(5))
+    con.connect().close()
     return df
 
 
 @app.route('/muestreo', methods =['POST'])
 def muestreo():
+    con = create_engine(db_connection_string)
     con.connect()
     ciudad = request.form['ciudad']
     puntos1 = int(request.form['puntos1'])
@@ -81,12 +89,12 @@ def muestreo():
     elif tipoes == "csus":
         df = muestreocsus(ciudad, proporcion, puntos1, puntos2)
     else:
-        df = muestreoloc(proporcion, puntos1, puntos2)
+        df = muestreoloc(ciudad,proporcion, puntos1, puntos2)
     sample = df.to_json()
     print(df)
     archivo = os.path.join(app.root_path, 'static/downloads/', '', 'Muestreo.xlsx')
     df.to_excel(archivo, index = False, header=True)
-    con.connect().close()
+
     if tipoes == 'csus':
         rtemplate = "csus.html"
     else:
@@ -96,6 +104,7 @@ def muestreo():
 
 @app.route('/prox', methods =['GET','POST'])
 def prox():
+    con = create_engine(db_connection_string)
     con.connect()
     if request.method == 'POST':
 
@@ -130,6 +139,7 @@ def prox():
 
 @app.route('/systematic' ,methods =['GET','POST'])
 def systematic():
+    con = create_engine(db_connection_string)
     if request.method == 'GET' :
         sql = "select * from direstratosys where ciudad = 'Bogota' order by random() limit 30000;"
         intervalo = 5
