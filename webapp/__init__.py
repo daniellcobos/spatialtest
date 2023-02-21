@@ -156,6 +156,7 @@ def systematic():
     sample = df2.to_json()
     archivo = os.path.join(app.root_path, 'static/downloads/', '', 'Muestreo3.xlsx')
     download = df2.to_excel(archivo, index=False, header=True)
+    print("e")
     con.connect().close()
     return render_template("muestreosistematico.html", sample=sample)
 
